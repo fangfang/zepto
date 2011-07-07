@@ -72,7 +72,7 @@ Context and .find calls are equivalent:
   html(function(index, oldhtml){ return ...; }): set the contents of the element(s) from a method
 
   html(): get first element's .innerHTML
-  text(): get first element's .innerText
+  text(): get first element's .textContent
   text('new text'): set the text contents of the element(s)
   append(), prepend(): like html(), but add html (or a DOM Element or a Zepto object) to element contents
   before(), after(): add html (or a DOM Element or a Zepto object) before/after the element
@@ -129,7 +129,7 @@ Context and .find calls are equivalent:
 = Utility functions:
 
   $(document).ready(function(){ ... }): call function after DOM is ready to use (before load event fires)
-  $.isFunction(function), $.isObject(object), $.isArray(array): returns true if given parameter is a function; an object; or an array, respectively 
+  $.isFunction(function), $.isObject(object), $.isArray(array): returns true if given parameter is a function; an object; or an array, respectively
   $.extend(target, secondObject): extends (merge) the target object with secondObject. Modifies and returns target
 
 = Event handlers
@@ -221,12 +221,13 @@ Loading content into an element:
 
 Zepto includes information about the environment it is running in the $.os object:
 
-  $.os.ios     // => true if running on Apple iOS
-  $.os.android // => true if running on Android
-  $.os.webos   // => true if running on HP/Palm WebOS
-  $.os.version // => string with version number, "4.0", "3.1.1", "2.1", etc.
-  $.os.iphone  // => true if running on iPhone
-  $.os.ipad    // => true if running on iPad
+  $.os.ios      // => true if running on Apple iOS
+  $.os.android  // => true if running on Android
+  $.os.webos    // => true if running on HP/Palm WebOS
+  $.os.touchpad // => true if running on a HP TouchPad
+  $.os.version  // => string with version number, "4.0", "3.1.1", "2.1", etc.
+  $.os.iphone   // => true if running on iPhone
+  $.os.ipad     // => true if running on iPad
   $.os.blackberry // => true if running on BlackBerry
 
 = Building
@@ -238,8 +239,8 @@ For this to work, you need Ruby and Rake installed.
 First of all, check you have the uglifier gem installed typing
 
   $ gem install uglifier
-  
-Then build the minified Zepto.js library with  
+
+Then build the minified Zepto.js library with
 
   $ rake
 
@@ -301,7 +302,7 @@ Also, Zepto.js contains some non-jQuery extensions, that are geared towards mobi
 
 Visit http://zeptojs.com/
 
-Join #zepto on irc.freenode.net and stay updated on http://twitter.com/zeptojs
+Join Zepto.js Convore group https://convore.com/zeptojs/, #zepto on irc.freenode.net and stay updated on http://twitter.com/zeptojs
 
 Have fun!
 
