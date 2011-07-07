@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <script src="../../src/zepto.js"></script>
+  <script src="../../src/event.js"></script>
+  <script src="../holdevent/holdevent.js"></script>
+  <script src="icondrag.js"></script>
+  
+  <style type="text/css">
+ .slot{float:left;padding:5px;width:55px;height:55px;margin:5px;position:relative;}
+	
+.icon{width:55px;height:55px;text-align:center;
+position:absolute;top:0;left:0;border:1px solid #888;
+-moz-border-radius:7px;
+-webkit-border-radius:7px;
+-moz-box-shadow: rgba(0, 0, 0, 0.2) 1px 2px 2px;
+-webkit-box-shadow: rgba(0, 0, 0, 0.2) 1px 2px 2px;
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0.5,rgba(0,0,0,0)), color-stop(1.0,rgba(0,0,0,0.1)));
+background: -moz-linear-gradient(-90deg,rgba(0,0,0,0),rgba(0,0,0,0),rgba(0,0,0,0.1));
+}
+  </style>
+  <style type="text/css">
+  	
+  	 @-webkit-keyframes zepto-icondrag-shake-kf{
+  	 	0%{
+		-webkit-transform:rotate(0deg) translate(1px,0);
+		}
+		
+		25%{
+		-webkit-transform:rotate(2deg) translate(0,0);
+		}
+		
+		50%{
+		-webkit-transform:rotate(0deg) translate(1px,0);
+		}
+		
+		75%{
+		-webkit-transform:rotate(-2deg) translate(0,0);
+		}
+		
+		100%{
+		-webkit-transform:rotate(0deg) translate(1px,0);
+		}
+  	 }
+	 
+	.zepto-icondrag-shake{
+		-webkit-animation-name: zepto-icondrag-shake-kf;
+  		-webkit-animation-duration: .3s;
+  		-webkit-animation-iteration-count: infinite;
+	}
+	
+	.zepto-icondrag-zoom{
+		-webkit-transition-property: -webkit-transform,opacity;
+		-webkit-transition-duration: .5s, .5s;
+	}
+	
+	.zepto-icondrag-zoomin{
+		opacity:.5;
+	}
+	
+  </style>
+</head>
+<body>
+	<h1>
+		Hold and then drag the icon
+	</h1>
+	<div id="placeholder">
+		
+		<div class="slot">
+			<div class="icon">
+				0
+				
+			</div>	
+		</div>
+		
+		<div class="slot">
+			<div class="icon">
+				1
+				
+			</div>	
+		</div>
+		
+		<div class="slot">
+			<div class="icon">
+				2
+				
+			</div>	
+		</div>
+		
+		<div class="slot">
+			<div class="icon">
+				3
+				
+			</div>	
+		</div>
+		
+		<div class="slot">
+			<div class="icon">
+				4
+				
+			</div>	
+		</div>
+		
+		<div class="slot">
+			<div class="icon">
+				5
+				
+			</div>	
+		</div>
+		
+		<div class="slot">
+			<div class="icon">
+				6
+				
+			</div>	
+		</div>
+		
+		<div class="slot">
+			<div class="icon">
+				7
+				
+			</div>	
+		</div>
+		<!--
+		<div class="slot">
+			<div class="icon">
+				<img src="data:image/gif;base64,R0lGODlhOQA5AMQAAJGM7lpT5cjG9tbU+PHx/TEn3pGM7ayo8sjF9nZw6Z6a8OPi+z824ExE42hh57q39IR+662p8uTi+4N+63Zv6SMZ3P///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAA5ADkAAAX/oCWOZGmeaKqubOu+cCzPdG3feK6zi2I8u9yhQqw0CCfCQbEIqh7FYsP0KBQhThQjWjyQhtxEtgTlEqeihdUMHIsM5uIoEDe6RY56BWFZ6CtIbnR1fAp/fG4JegMWcIt3jnFvegU7C0uMIgN1DiKGdWI5EFEBgYNciJt1TTiRUkgDa0WhIqdRCjkEslGhA1tEWCS+XMEWAwisMp9xyceBJQQKAQEJiAeyDG0weXW4M2VcXjC/cQY05FzJLX/mMqpxtC27XO0kPQ4BEOIlYHEMMLbCkSCgiAuDTCNcmYHRz0wyAg307Gv0BwYBdEU6zflTAaFCLjFicTkyYpkeBoFM/46UsSCBlQAKnr3j2EtPvBtqOEZph7EIIhwQowgY+seLSIE5jsoRwdFLNHzUft6ospBpUzcql1rQWWGijoJEKEQYKmCEkWnkGEyLWKFYjlMNEJaoUNYCgCIARAjI+MzGKCIFJKSgK+IukbwW9r66gSAKYrtaCUM+rJdLgBvciAi2ECGK2bqGKyBWHEWqDJB4PDMFjbdymBqNVVvIXOFz4daJzfyjEbtIJnC1V9+mnLvqDD+ORzyYdlm4BQITpkVwHaVSjV0F5M6dkIJ0keY0wAKua4LI9BPeidQ7HicAgPfwQ7uP/56Cwxsfueq8GV6/f5I5IEAbYPkcgAAjCCCggB4D8wBmQF93qDDAAwZUaIBpEWao4YYcdujhhyCuEAIAOw==">
+				
+			</div>	
+		</div>
+		-->
+	</div>
+	<script>
+		$(".icon").icondrag();
+	</script>
+</body>
+</html>

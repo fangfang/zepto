@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+        <script src="../../src/zepto.js">
+        </script>
+        <script src="../../src/event.js">
+        </script>
+        <script src="bigslide.js">
+        </script>
+        <style type="text/css">
+            .foo {
+                border: 1px #eee solid;
+                height: 50px;
+                width: 420px
+            }
+            
+            .item {
+                position: relative;
+                width: 70px;
+                height: 30px;
+                margin: 10px 5px;
+                float: left;
+                border: 1px #eee dashed;
+                text-align: center;
+            }
+            
+            .real-item {
+                position: absolute;
+                width: 50px;
+                height: 20px;
+                border: 1px #333 solid;
+                top: 4px;
+                left: 8px
+            }
+        </style>
+        <style type="text/css">  
+            .zepto-bigslide-box {
+                overflow: hidden;
+            }
+            
+            .zepto-bigslide-force {
+                -webkit-transition: -webkit-transform 1s cubic-bezier(0,0,0.05,1)}
+              
+        </style>
+    </head>
+    <body>
+        <h1> Big Slide</h1>
+        <div class="foo zepto-bigslide-box">
+            <div class="zepto-bigslide-silder">
+                <div class="item">
+                    <div class="real-item">
+                        1
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="real-item">
+                        2
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="real-item">
+                        3
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="real-item">
+                        4
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="real-item">
+                        5
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="real-item">
+                        6
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+		
+        <script>
+            (function(){
+                function scale(zobj, sc){
+                    var trans = zobj.css("-webkit-transform");
+                    trans = (trans == "none" ? "matrix(1,0,0,1,0,0)" : trans);
+                    var m = /(.+,)([^,]+,[^,]+\))$/.exec(trans);
+                    zobj.css("-webkit-transform", "matrix(" + sc + ",0,0," + sc + "," + m[2]);
+                }
+                
+                function zoom(zobj){
+                    var offset = zobj.offset();
+                    
+                    var delta = Math.abs(193 - offset.left);
+                    if (delta < 100) {
+                        //console.log(2-delta/100);
+                        scale(zobj, 2 - delta / 100);
+                        //console.log(2-delta/100);
+                    }
+                }
+                
+                var zooms = $(".real-item", $(".foo"));
+                zooms.each(function(){
+                    zoom($(this));
+                })
+                $(".foo").bigslide({
+                    ontouchmove: function(cmove, lmove, last){
+                        zooms.each(function(){
+                            zoom($(this));
+                        })
+                    },
+                    direction: "horizontal",//vertical
+                    power: 0//default 200, set 0 to disable inertia
+                });
+            })()
+        </script>
+    </body>
+</html>

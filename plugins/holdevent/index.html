@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <script src="../../src/zepto.js"></script>
+  <script src="../../src/event.js"></script>
+  
+  <script src="holdevent.js"></script>
+  
+  <style type="text/css">
+ .icon{margin:0 auto;}
+	
+.icon,.icon a{position:relative;display:block;width:55px;height:55px;text-align:center;}
+.icon a{position:absolute;top:0;left:0;border:1px solid #888;
+-moz-border-radius:7px;
+-webkit-border-radius:7px;
+-moz-box-shadow: rgba(0, 0, 0, 0.2) 1px 2px 2px;
+-webkit-box-shadow: rgba(0, 0, 0, 0.2) 1px 2px 2px;
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0.5,rgba(0,0,0,0)), color-stop(1.0,rgba(0,0,0,0.1)));
+background: -moz-linear-gradient(-90deg,rgba(0,0,0,0),rgba(0,0,0,0),rgba(0,0,0,0.1));
+}
+  </style>
+  <style type="text/css">
+  
+	.zepto-icondrag-zoom{
+		-webkit-transition-property: -webkit-transform,opacity;
+		-webkit-transition-duration: .5s, .5s;
+	}
+	
+	.zepto-icondrag-zoomin{
+		-webkit-transform:scale(1.2);
+		opacity:.5;
+	}
+	
+  </style>
+</head>
+<body>
+	<h1>
+		Hold the icon
+	</h1>
+	<div id="placeholder">
+		<div class="icon">
+			<img src="data:image/gif;base64,R0lGODlhOQA5AMQAAJGM7lpT5cjG9tbU+PHx/TEn3pGM7ayo8sjF9nZw6Z6a8OPi+z824ExE42hh57q39IR+662p8uTi+4N+63Zv6SMZ3P///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAA5ADkAAAX/oCWOZGmeaKqubOu+cCzPdG3feK6zi2I8u9yhQqw0CCfCQbEIqh7FYsP0KBQhThQjWjyQhtxEtgTlEqeihdUMHIsM5uIoEDe6RY56BWFZ6CtIbnR1fAp/fG4JegMWcIt3jnFvegU7C0uMIgN1DiKGdWI5EFEBgYNciJt1TTiRUkgDa0WhIqdRCjkEslGhA1tEWCS+XMEWAwisMp9xyceBJQQKAQEJiAeyDG0weXW4M2VcXjC/cQY05FzJLX/mMqpxtC27XO0kPQ4BEOIlYHEMMLbCkSCgiAuDTCNcmYHRz0wyAg307Gv0BwYBdEU6zflTAaFCLjFicTkyYpkeBoFM/46UsSCBlQAKnr3j2EtPvBtqOEZph7EIIhwQowgY+seLSIE5jsoRwdFLNHzUft6ospBpUzcql1rQWWGijoJEKEQYKmCEkWnkGEyLWKFYjlMNEJaoUNYCgCIARAjI+MzGKCIFJKSgK+IukbwW9r66gSAKYrtaCUM+rJdLgBvciAi2ECGK2bqGKyBWHEWqDJB4PDMFjbdymBqNVVvIXOFz4daJzfyjEbtIJnC1V9+mnLvqDD+ORzyYdlm4BQITpkVwHaVSjV0F5M6dkIJ0keY0wAKua4LI9BPeidQ7HicAgPfwQ7uP/56Cwxsfueq8GV6/f5I5IEAbYPkcgAAjCCCggB4D8wBmQF93qDDAAwZUaIBpEWao4YYcdujhhyCuEAIAOw==">
+			<a href="http://m.baidu.com"></a>
+		</div>
+	</div>
+	<script>
+		$(".icon").addClass("zepto-icondrag-zoom").bind("hold",function(e){
+			$(this).addClass("zepto-icondrag-zoomin");
+		}).bind("holdend",function(e){
+			$(this).removeClass("zepto-icondrag-zoomin");
+		});
+	</script>
+</body>
+</html>
