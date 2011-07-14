@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <script src="../../src/zepto.js"></script>
+  <script src="../../src/event.js"></script>
+  
+  <script src="slideevent.js"></script>
+  
+  <style type="text/css">
+ 
+   body{height:1000px}
+  </style>
+</head>
+<body>
+    <h1>
+        Slide to left,right;
+    </h1>
+    <div id="text">
+        
+    </div>
+    <script>
+        $("body").slideevent().bind("slideleft",function(){
+			$('#text').html("left");
+		}).bind("slideright",function(){
+            $('#text').html("rigth");
+        });
+    </script>
+</body>
+</html>
