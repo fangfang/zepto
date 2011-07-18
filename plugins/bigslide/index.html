@@ -41,7 +41,8 @@
             }
             
             .zepto-bigslide-force {
-                -webkit-transition: -webkit-transform 1s cubic-bezier(0,0,0.05,1)}
+                -webkit-transition: -webkit-transform 1s cubic-bezier(0,0,0.05,1)
+			}
               
         </style>
     </head>
@@ -61,7 +62,7 @@
                 </div>
                 <div class="item">
                     <div class="real-item">
-                        3
+                       <a href="http://www.baidu.com/">baidu</a>
                     </div>
                 </div>
                 <div class="item">
@@ -105,13 +106,13 @@
                 
                 var zooms = $(".real-item", $(".foo"));
                 zooms.each(function(){
-                    zoom($(this));
+                  //  zoom($(this));
                 })
                 $(".foo").bigslide({
                     ontouchmove: function(cmove, lmove, last){
-                        zooms.each(function(){
-                            zoom($(this));
-                        })
+                       // zooms.each(function(){
+                       //     zoom($(this));
+                       // })
                     },
                     direction: "horizontal",//vertical
                     power: 0//default 200, set 0 to disable inertia
