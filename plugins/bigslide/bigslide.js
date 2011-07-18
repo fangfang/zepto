@@ -7,7 +7,7 @@
 	
     
     function translate(zobj, x, y) {
-        zobj.css("-webkit-transform","translate3d("+x+"px,"+y+"px,0)");
+        zobj.css("-webkit-transform","translate("+x+"px,"+y+"px)");
     }
 
     function power(delta, duration, force) {

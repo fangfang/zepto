@@ -86,34 +86,7 @@
 		
         <script>
             (function(){
-                function scale(zobj, sc){
-                    var trans = zobj.css("-webkit-transform");
-                    trans = (trans == "none" ? "matrix(1,0,0,1,0,0)" : trans);
-                    var m = /(.+,)([^,]+,[^,]+\))$/.exec(trans);
-                    zobj.css("-webkit-transform", "matrix(" + sc + ",0,0," + sc + "," + m[2]);
-                }
-                
-                function zoom(zobj){
-                    var offset = zobj.offset();
-                    
-                    var delta = Math.abs(193 - offset.left);
-                    if (delta < 100) {
-                        //console.log(2-delta/100);
-                        scale(zobj, 2 - delta / 100);
-                        //console.log(2-delta/100);
-                    }
-                }
-                
-                var zooms = $(".real-item", $(".foo"));
-                zooms.each(function(){
-                  //  zoom($(this));
-                })
                 $(".foo").bigslide({
-                    ontouchmove: function(cmove, lmove, last){
-                       // zooms.each(function(){
-                       //     zoom($(this));
-                       // })
-                    },
                     direction: "horizontal",//vertical
                     power: 0//default 200, set 0 to disable inertia
                 });

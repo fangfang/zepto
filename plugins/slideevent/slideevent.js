@@ -14,13 +14,15 @@
 	 
 	 
 	 $.fn.slideevent = function(){
-		 var fired = false,start;
+		 var fired = false,start,triggerClick = true;
 			handleTouchStart = function(e){
 				start  = getpos(e);
 				fired = false;
+				triggerClick = true;
 				e.preventDefault();
 			},
 			handleTouchMove = function(e){
+				triggerClick = false;
 				if(fired){
 					return;
 				}
@@ -34,7 +36,12 @@
 					triggerSlideEvent("left");
 				}
 			},
-			handleTouchEnd = handleTouchMove,
+			handleTouchEnd = function(e){
+				if(triggerClick){
+					$(start.target).trigger('click');
+				}
+				handleTouchMove(e);	
+			},
 			triggerSlideEvent = function(type){
 				$(start.target).trigger('slide'+type,start);
 			};

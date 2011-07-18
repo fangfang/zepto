@@ -2,7 +2,7 @@
 
     
     function matrix(elem, x, y, scale) {
-        $(elem).show().css("-webkit-transform","matrix("+scale+",0,0,"+scale+","+x+","+y+")");
+    	$(elem).show().css("-webkit-transform","translate("+x+"px,"+y+"px) scale("+scale+")");
     }
     
     function roll(child,slots,start,offset){
@@ -49,9 +49,11 @@
         };
         
         var status = roll(child,opt.slots,opt.start,0);
-        
     	
-    	thiz.slideevent().bind("slideleft",function(e){
+    	thiz.css({
+        	"-webkit-perspective":1000,
+        	"-webkit-backface-visibility": 'hidden'
+        }).slideevent().bind("slideleft",function(e){
     		child.addClass(opt.clz);
     		status = roll(child,opt.slots,status,1);
     	}).bind("slideright",function(e){
