@@ -62,7 +62,8 @@
         	"-webkit-backface-visibility": 'hidden'
         }).each(function(index) {
             var thiz = this, that = $(thiz), slider = that.children(), ontouchmove = function(e) {
-				var tmp = getpos(e.touches[0], opt.direction);
+            	triggerClick = false;
+            	var tmp = getpos(e.touches[0], opt.direction);
 				last = {
 					x: last.x + tmp.x - cmove.x,
 					y: last.y + tmp.y - cmove.y
@@ -98,7 +99,6 @@
 					});
 				}
 			}, move = function(range) {
-				triggerClick = false;
 				if (opt.direction == "horizontal") {
 		            last.x +=  range;
 		        }
@@ -113,11 +113,11 @@
 		        last.x = (lcoffset.left + lcoffset.width + range) < pwidth ? pwidth - width : last.x;
 		        last.y = (lcoffset.top + lcoffset.height + range) < pheight ? pheight - height : last.y;
 				
-				//slider.addClass('zepto-bigslide-move');
+				slider.addClass('zepto-bigslide-move');
 				translate(slider, last.x, last.y);
-				//slider.one("webkitTransitionEnd", function(e) {
-				//	slider.removeClass('zepto-bigslide-move');
-				//});
+				slider.one("webkitTransitionEnd", function(e) {
+					slider.removeClass('zepto-bigslide-move');
+				});
 		
 			}, cmove, lmove, last = {
                 x: 0,
