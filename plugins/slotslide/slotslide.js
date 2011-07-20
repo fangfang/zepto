@@ -53,7 +53,7 @@
     	thiz.css({
         	"-webkit-perspective":1000,
         	"-webkit-backface-visibility": 'hidden'
-        }).slideevent().bind("slideleft",function(e){
+        }).bind("slideleft",function(e){
     		child.addClass(opt.clz);
     		status = roll(child,opt.slots,status,1);
     	}).bind("slideright",function(e){
