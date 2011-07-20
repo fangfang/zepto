@@ -16,7 +16,8 @@
 			}
 	
 		};
-		$(win).bind('scroll',update);
+		$(win).bind('scroll',update)
+		.bind('unload',function(){});//fix backspace problem
 		return me;
 	}
 })(Zepto);
