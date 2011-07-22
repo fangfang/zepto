@@ -1,6 +1,6 @@
 (function($){
 	
-	 var OFFSET = 64;
+	 
 	 
 	 function parentIfText(node){
 	      return 'tagName' in node ? node : node.parentNode;
@@ -13,13 +13,17 @@
 	 }
 	 
 	 
-	 $.fn.slideevent = function(){
-		 var fired = false,start,triggerClick = true;
+	 $.fn.slideevent = function(options){
+		 var fired = false,start,triggerClick = true,
+		 opt = $.extend({
+			 preventDefault : true,
+			 offset : 64
+		 	},options),
 			handleTouchStart = function(e){
 				start  = getpos(e);
 				fired = false;
 				triggerClick = true;
-				e.preventDefault();
+				opt.preventDefault && e.preventDefault();
 			},
 			handleTouchMove = function(e){
 				triggerClick = false;
@@ -27,17 +31,17 @@
 					return;
 				}
 				var end = getpos(e);
-				if(end.x - start.x > OFFSET){
+				if(end.x - start.x > opt.offset){
 					fired = true;
 					triggerSlideEvent("right");
 					e.preventDefault();
-				}else if(end.x - start.x < -OFFSET){
+				}else if(end.x - start.x < -opt.offset){
 					fired = true;
 					triggerSlideEvent("left");
 				}
 			},
 			handleTouchEnd = function(e){
-				if(triggerClick){
+				if(triggerClick && opt.preventDefault){
 					$(start.target).trigger('click');
 				}
 				handleTouchMove(e);	

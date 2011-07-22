@@ -11,21 +11,50 @@
   <style type="text/css">
  
    body{height:1000px}
+   
+   #d1{height:150px;background:#ccc}
+   #d2{height:150px;background:#aca}
+   
   </style>
 </head>
 <body>
     <h1>
-        Slide to left,right;
+        Slide to left,right
     </h1>
-    <div id="text">
-        
+	<div id="text">
+        -
     </div>
+	<div id="click">
+        -
+    </div>
+	<div id="d1">
+		prevents Scroll
+	</div>
+	<div id="d2">
+        default Scroll enabled
+    </div>
+	
     <script>
-        $("body").slideevent().bind("slideleft",function(){
-			$('#text').html("left");
-		}).bind("slideright",function(){
-            $('#text').html("rigth");
+    	$.fn.randomColor = function(){
+			var r = Math.floor(Math.random()*255),g = Math.floor(Math.random()*255) ,b = Math.floor(Math.random()*255);
+		  return this.css('color','rgb('+r+','+g+','+b+')');	
+		}
+		
+        $("#d1").slideevent().bind("slideleft",function(){
+            $('#text').html("left").randomColor();
+        }).bind("slideright",function(){
+            $('#text').html("right").randomColor();
+        }).bind('click',function(){
+            $('#click').html('click').randomColor();
         });
+		
+		$("#d2").slideevent({preventDefault:false}).bind("slideleft",function(){
+            $('#text').html("left").randomColor();
+        }).bind("slideright",function(){
+            $('#text').html("right").randomColor();
+        }).bind('click',function(){
+            $('#click').html('click').randomColor();
+        });;
     </script>
 </body>
 </html>

@@ -6,8 +6,8 @@
     }
     
     function roll(child,slots,start,offset){
-    	var len = slots.length;
-    	var clen = child.length;
+    	var len = slots.length,
+    	clen = child.length;
     	
     	for(var i=0; i<len ; i ++ ){
     		//child.get()
@@ -56,9 +56,11 @@
         }).bind("slideleft",function(e){
     		child.addClass(opt.clz);
     		status = roll(child,opt.slots,status,1);
+    		
     	}).bind("slideright",function(e){
     		child.addClass(opt.clz);
     		status = roll(child,opt.slots,status,-1);
+    		
     	});
        
         if(opt.controllers){
