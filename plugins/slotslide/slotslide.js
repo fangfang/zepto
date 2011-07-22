@@ -31,7 +31,8 @@
     $.fn.slotslide = function(options) {
         var opt = $.extend({
         	clz : "zepto-slotslide-anim",
-        	start : 0
+        	start : 0,
+        	indexFn : function(firstElementIndex){}
         }, options),
         thiz = this,child = thiz.children().hide();
     	//init hide
@@ -49,18 +50,17 @@
         };
         
         var status = roll(child,opt.slots,opt.start,0);
-    	
     	thiz.css({
         	"-webkit-perspective":1000,
         	"-webkit-backface-visibility": 'hidden'
         }).bind("slideleft",function(e){
     		child.addClass(opt.clz);
     		status = roll(child,opt.slots,status,1);
-    		
+    		opt.indexFn.call(thiz,status);
     	}).bind("slideright",function(e){
     		child.addClass(opt.clz);
     		status = roll(child,opt.slots,status,-1);
-    		
+    		opt.indexFn.call(thiz,status);
     	});
        
         if(opt.controllers){

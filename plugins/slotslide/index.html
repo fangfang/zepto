@@ -45,6 +45,7 @@
     </head>
     <body>
         <h1> Slot Slide <span id="lt">&lt;</span>&#160;&#160;&#160;<span id="gt">&gt;</span></h1>
+		<div id="text">-</div>
         <div class="foo">
             <div class="item">
                     0
@@ -70,7 +71,7 @@
 	      
 			
 			
-         <!--  <div class="item">
+          <div class="item">
                     7
             </div>
             <div class="item">
@@ -84,7 +85,7 @@
             </div>
             <div class="item">
                     11
-            </div>-->
+            </div>
         </div>
         
 
@@ -100,20 +101,23 @@
 				slotsFn:function(w,childindex){//if slots Fn is defined, slots will be calculated
 					//this == child
 					if(childindex ==0){
-						return [-200,30,1];
+						return [-100,30,1];
 					}
-					if(childindex == 1){
-                        return [-100,30,1];
+					if(childindex == 2 ){
+                        return [100,30,1.5];
                     }
-					if(childindex >= 7){
+					if(childindex >= 5){
                         return false;
                     }
 					return [100 + w ,30 , 1];
 				},
-				start : 6,
+				start : -1,
 				controllers:{
 					"slideleft" : "#lt",
 					"slideright" : "#gt"
+				},
+				indexFn:function(num){
+					$("#text").html(num);
 				}
 			});
         </script>

@@ -20,4 +20,12 @@
 		.bind('unload',function(){});//fix backspace problem
 		return me;
 	}
+	
+	$.fn.hoveringClear = function(){
+		var me=this;
+		me.removeClass("zepto-hovering");
+		me.positionfixedclear();
+		me.hoveringActive=false;
+	}
+
 })(Zepto);
