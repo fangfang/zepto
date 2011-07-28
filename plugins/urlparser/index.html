@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>urlparser demo</title>
+    </head>
+    <body>
+        <h1>urlparser demo</h1>
+        <p>url: http://www.baidu.com/baidu?wd=urlparser&tn=monline_4_dg</p>
+        <p >请先打开firebug控制台</p>
+        <button id="btn">然后用力点我</button>
+        <p>可以直接修改协议、域名、端口、参数、hash，生成新url，比如改成ftp,8080,www.url.com,wd=demo</p>
+        <button id="btn2">再用力点我</button>
+        <p id="result"></p>
+    </body>
+    <script src="../../src/zepto.js" tpye="text/javascript"></script>
+    <script src="../../src/event.js" tpye="text/javascript"></script>
+    <script src="urlparser.js" tpye="text/javascript"></script>
+    <script>
+        (function($){
+            $(document).ready(function(){
+                var urlobj = $.urlParser({url:'http://www.baidu.com/baidu?wd=urlparser&tn=monline_4_dg'});
+                $('#btn').bind('click', function() {
+                    console.log(urlobj);
+                });
+                $('#btn2').bind('click', function() {
+                    urlobj.protocol = 'ftp';
+                    urlobj.port = '8080';
+                    urlobj.host = 'www.url.com';
+                    urlobj.params.wd = 'demo';
+                    $('#result').html(urlobj.toUrl());
+                });
+            });
+        })(Zepto);
+    </script>
