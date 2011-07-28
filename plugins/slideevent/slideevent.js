@@ -1,50 +1,60 @@
 (function($){
-	
-	 
 	 
 	 function parentIfText(node){
 	      return 'tagName' in node ? node : node.parentNode;
 	 }
 	 
 	 function getpos(e){
-		 return {x:e.changedTouches[0].clientX,
-			 	y:e.changedTouches[0].clientY,
+		 return {x:e.clientX,
+			 	y:e.clientY,
 			 	target:parentIfText(e.target)}
 	 }
 	 
 	 
 	 $.fn.slideevent = function(options){
-		 var fired = false,start,triggerClick = true,
+		 var ismoving = false,start,isX,me = this,
 		 opt = $.extend({
-			 preventDefault : true,
-			 offset : 64
+                gap:20,
+                ontouchstart:function(){},
+                ontouchmove:function(){},
+                ontouchend:function(){}
 		 	},options),
 			handleTouchStart = function(e){
-				start  = getpos(e);
-				fired = false;
-				triggerClick = true;
-				opt.preventDefault && e.preventDefault();
+				start  = getpos(e.touches[0]);
+				ismoving = false;
+                opt.ontouchstart.call(me, e);
 			},
 			handleTouchMove = function(e){
-				triggerClick = false;
-				if(fired){
-					return;
-				}
-				var end = getpos(e);
-				if(end.x - start.x > opt.offset){
-					fired = true;
-					triggerSlideEvent("right");
-					e.preventDefault();
-				}else if(end.x - start.x < -opt.offset){
-					fired = true;
-					triggerSlideEvent("left");
-				}
+                var end = getpos(e.touches[0]), deltaX = end.x - start.x;
+                
+                if(!ismoving) {
+                    isX = Math.abs(deltaX) > Math.abs(end.y - start.y); 
+                    isX && e.preventDefault();
+                    ismoving = true;
+                }
+                else {
+                    if(isX){ 
+                        e.preventDefault();
+                        opt.ontouchmove.call(me, e);
+                    }
+                }
 			},
 			handleTouchEnd = function(e){
-				if(triggerClick && opt.preventDefault){
+                var end = getpos(e.changedTouches[0]), deltaX = end.x - start.x;
+				if(!ismoving || Math.abs(deltaX) < 10){
 					$(start.target).trigger('click');
 				}
-				handleTouchMove(e);	
+                else{
+                    if(isX){
+                        if(deltaX > opt.gap) {
+                            triggerSlideEvent("right");
+                        }
+                        else if(deltaX < -opt.gap){
+                            triggerSlideEvent("left");
+                        }
+                        opt.ontouchend.call(me, e);
+                    }
+                }
 			},
 			triggerSlideEvent = function(type){
 				$(start.target).trigger('slide'+type,start);

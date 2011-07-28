@@ -63,7 +63,7 @@
         }).each(function(index) {
             var thiz = this, that = $(thiz), slider = that.children(), ontouchmove = function(e) {
             	triggerClick = false;
-            	var tmp = getpos(e.touches[0], opt.direction);
+            	var tmp = getpos(e, opt.direction);
 				last = {
 					x: last.x + tmp.x - cmove.x,
 					y: last.y + tmp.y - cmove.y
@@ -75,8 +75,8 @@
 				opt.ontouchmove.call(thiz, cmove, lmove, last);
 			}, ontouchend = function(e) {
 				
-				body.unbind("touchmove", ontouchmove);
-				body.unbind("touchend", ontouchend);
+				body.unbind("mousemove", ontouchmove);
+				body.unbind("mouseup", ontouchend);
 				
 				if(triggerClick){
 					$(parentIfText(e.target)).trigger('click');
@@ -87,7 +87,7 @@
 				}
 				
 				if (lmove) {
-					cmove = getpos(e.changedTouches[0], opt.direction);
+					cmove = getpos(e, opt.direction);
 					var dtime = cmove.time - lmove.time;
 					
 					last = computepos(slider, last, cmove, lmove, dtime, opt.power);
@@ -123,12 +123,12 @@
                 x: 0,
                 y: 0
             },triggerClick = true;
-            that.bind("touchstart", function(e) {
+            that.bind("mousedown", function(e) {
             	triggerClick = true;
-                cmove = getpos(e.touches[0], opt.direction);
+                cmove = getpos(e, opt.direction);
                 slider.removeClass("zepto-bigslide-force");
-                body.bind("touchmove", ontouchmove);
-                body.bind("touchend", ontouchend);
+                body.bind("mousemove", ontouchmove);
+                body.bind("mouseup", ontouchend);
                 e.preventDefault();
             });
 			if ( opt.positive ) {

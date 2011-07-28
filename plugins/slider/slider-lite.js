@@ -33,6 +33,7 @@
             width: lcoffset.left + lcoffset.width + parseInt(lc.css('margin-right')) + parseInt(obj.css('padding-left')) - fcoffset.left,
             height: lcoffset.top + lcoffset.height + parseInt(lc.css('margin-bottom')) + parseInt(obj.css('padding-top')) - fcoffset.top
         };
+        return obj.offset();
     }
 	
 	function checkEdge(posValue, sliderValue, parentValue, powerValue) {
@@ -66,7 +67,7 @@
         }).each(function(index) {
             var thiz = this, that = $(thiz), slider = that.children(), ontouchmove = function(e) {
                 triggerClick = false;
-                var tmp = getpos(e.touches[0], opt.direction);
+                var tmp = getpos(e, opt.direction);
                 last = {
                     x: last.x + tmp.x - cmove.x,
                     y: last.y + tmp.y - cmove.y
@@ -77,8 +78,8 @@
                 cmove = tmp;
             }, ontouchend = function(e) {
             
-                body.unbind("touchmove", ontouchmove);
-                body.unbind("touchend", ontouchend);
+                body.unbind("mousemove", ontouchmove);
+                body.unbind("mouseup", ontouchend);
                 
                 if (triggerClick) {
                     $(parentIfText(e.target)).trigger('click');
@@ -89,7 +90,7 @@
                 }
                 
                 if (lmove) {
-                    cmove = getpos(e.changedTouches[0], opt.direction);
+                    cmove = getpos(e, opt.direction);
                     var dtime = cmove.time - lmove.time;
                     
                     last = computepos(last, power(cmove.x - lmove.x, dtime, opt.power), power(cmove.y - lmove.y, dtime, opt.power), slideroffset, that.offset());
@@ -121,12 +122,12 @@
                 y: 0
             }, triggerClick = true, slideroffset = getOffset(slider);
             
-            that.bind("touchstart", function(e) {
+            that.bind("mousedown", function(e) {
                 triggerClick = true;
-                cmove = getpos(e.touches[0], opt.direction);
+                cmove = getpos(e, opt.direction);
                 slider.removeClass("zepto-bigslide-force");
-                body.bind("touchmove", ontouchmove);
-                body.bind("touchend", ontouchend);
+                body.bind("mousemove", ontouchmove);
+                body.bind("mouseup", ontouchend);
                 e.preventDefault();
             });
 			
@@ -137,12 +138,12 @@
                     setTimeout(timeout, 100);
                 }
 			}, bindBtn = function(selector, dir) {
-				$(selector).bind('touchstart', function(e) {
+				$(selector).bind('mousedown', function(e) {
 					direction = dir;
                     e.preventDefault();
                     hold = true;
                     setTimeout(timeout, 100);
-                }).bind('touchend', function(e) {
+                }).bind('mouseup', function(e) {
                     hold = false;
                 });
 			};
