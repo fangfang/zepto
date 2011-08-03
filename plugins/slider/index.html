@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+        <script src="../../src/zepto.js">
+        </script>
+        <script src="../../src/event.js">
+        </script>
+        <script src="slider-lite.js">
+        </script>
+        <style type="text/css">
+            .foo {
+                border: 1px #eee solid;
+                height: 50px;
+                width: 350px;
+            }
+
+            .zepto-bigslide-silder {
+                white-space:nowrap;
+            }
+
+            .item {
+                position: relative;
+                width: 70px;
+                height: 30px;
+                margin: 10px 5px;
+                border: 1px #eee dashed;
+                text-align: center;
+                display: inline-block;
+            }
+            
+            .real-item {
+                position: absolute;
+                width: 50px;
+                height: 20px;
+                border: 1px #333 solid;
+                top: 4px;
+                left: 8px
+            }
+        </style>
+        <style type="text/css">  
+            .zepto-bigslide-box {overflow: hidden;}
+			
+            .zepto-bigslide-force {-webkit-transition: -webkit-transform 1s cubic-bezier(0,0,0.05,1);}
+			.zepto-bigslide-move{-webkit-transition: -webkit-transform .1s linear;}
+              
+        </style>
+    </head>
+    <body>
+        <h1> Big Slide</h1>
+        <div class="foo zepto-bigslide-box">
+            <div class="zepto-bigslide-silder">
+                <div class="item">
+                    <div class="real-item">
+                        1
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="real-item">
+                        2
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="real-item">
+                       <a href="http://www.baidu.com/">baidu</a>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="real-item">
+                        4
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="real-item">
+                        5
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="real-item">
+                        6
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+		
+        <script>
+            (function(){
+                $(".foo").slider({
+                    direction: "horizontal",//vertical
+                    power: 200//default 200, set 0 to disable inertia
+                });
+            })()
+        </script>
+    </body>
+</html>

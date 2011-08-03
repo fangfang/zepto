@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>autorender demo</title>
+		<style>
+			* {
+				margin:0;
+				padding:0;
+			}
+			div {
+				margin:5px;
+			}
+			#wrap {
+				margin:0;
+				overflow:hidden;
+				-moz-transition:height .5s;
+				-webkit-transition:height .5s;
+				transition:height .5s linear;
+			}
+			#container {
+				border:1px black solid;
+			}
+			.tpl {
+				border:1px red solid;
+			}
+			.link {
+				border:1px blue solid;
+			}
+			
+		</style>
+    </head>
+    <body>
+        <h1>autorender demo</h1>
+		<div id="wrap">
+        <div id="container" data-ar-type="array">
+        	<div class="tpl" data-ar-type="hash" data-ar-name="item">
+        		<span data-ar-name="title">title</span>
+				<span data-ar-name="abs">abs</span>
+				<div class="link">
+					<img src="http://tp4.sinaimg.cn/1827492807/50/0/1" alt="" data-ar-type="link" data-ar-name="img"/>
+					<a href="http://m.baidu.com/s?word=autorenderA&x=1&yy=1" data-ar-type="link-tpl" data-ar-tpl="word=autorender[name]&x=[num]" >autorender<span data-ar-name="name">A</span></a>
+        		</div>
+        	</div>
+			<div class="tpl">
+	        	<span>title2</span>
+				<span>abs2</span>
+				<div class="link">
+					<img src="http://tp4.sinaimg.cn/1827492807/50/0/1" alt=""/>
+					<a href="http://m.baidu.com/s?word=autorenderB&x=2&yy=1">autorenderB</a>
+				</div>
+        	</div>
+        </div>
+		</div>
+		<button id="btn" type="button">点我</button>
+		<h1 id="res"></h1>
+    </body>
+    <script src="../../src/zepto.js" tpye="text/javascript"></script>
+    <script src="../../src/event.js" tpye="text/javascript"></script>
+    <script src="../../src/ajax.js" tpye="text/javascript"></script>
+    <script src="../urlparser/urlparser.js" tpye="text/javascript"></script>
+    <script src="autorender.js" tpye="text/javascript"></script>
+    <script>
+        (function($){
+            $(document).ready(function(){
+				$('#btn').removeAttr('disabled');
+                $('#btn').bind('click', function(){
+					$('#container').autorender({
+						url: 'http://fe.baidu.com/~luhaipeng/zepto/plugins/autorender/json.php',
+						preprocess: function(response){
+							$('#res').html('<img src="http://fe.baidu.com/~luhaipeng/zepto/plugins/autorender/img/load.gif" alt=""/>');
+							$('#wrap').height(parseInt(this.height()) + parseInt(this.css('margin-top')) + parseInt(this.css('margin-bottom')) + 'px');
+						},
+						callback: function(response){
+							$('#wrap').height(parseInt(this.height()) + parseInt(this.css('margin-top')) + parseInt(this.css('margin-bottom')) + 'px');
+							$('#res').html('done');
+							$('#btn').attr('disabled', 'disabled')
+						}
+					})
+				})
+            })
+        })(Zepto)
+    </script>
