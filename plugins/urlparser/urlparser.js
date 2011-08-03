@@ -36,12 +36,12 @@
 			relative: (a.href.match(/tps?:\/\/[^\/]+(.+)/) || [, ''])[1],
 			segments: a.pathname.replace(/^\//, '').split('/'),
 			toUrl: function() {
-				var port = this.port == '' ? '' : ':' + this.port,
+				var port = this.port == '' || this.port == '0' ? '' : ':' + this.port, //mobile safari当url中没有端口时，port为0，pc上此时port为空字符串
 					path = this.paht == '' ? '/' : this.path,
 					query = toQuery(this.params),
 					hash = this.hash == '' ? '' : '#' + this.hash;
 				query = query == '' ? '' : '?' + query;
-				return [this.protocol, '://', this.host, port, path, query, hash].join('');
+                return this.protocol + '://' + this.host + port + path + query + hash; //现代浏览器中，字符串拼接优化过，比join方法略快。
 			}
         };
     }
