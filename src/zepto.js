@@ -353,17 +353,16 @@ var Zepto = (function() {
        ((when !== undefined && !when) || $(this).hasClass(newName)) ?
          $(this).removeClass(newName) : $(this).addClass(newName)
       });
-    },
-    submit: function () {
-      return this.each(function () {
-        try {
-          // Submit first form element
-          this.submit();
-          return;
-        } catch(e) {};
-      });
     }
   };
+  ['submit','blur', 'focus' ].forEach(function(property){
+      $.fn[property] = function(){
+          return this.each(function(){
+              this[property]();
+              return;
+          });
+      }
+  });
 
   'filter,add,not,eq,first,last,find,closest,parents,parent,children,siblings'.split(',').forEach(function(property){
     var fn = $.fn[property];
