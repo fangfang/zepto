@@ -69,7 +69,7 @@
 						url: 'http://fe.baidu.com/~luhaipeng/zepto/plugins/autorender/json.php',
 						preprocess: function(response){
 							$('#res').html('<img src="http://fe.baidu.com/~luhaipeng/zepto/plugins/autorender/img/load.gif" alt=""/>');
-							$('#wrap').height(parseInt(this.height()) + parseInt(this.css('margin-top')) + parseInt(this.css('margin-bottom')) + 'px');
+							$('#wrap').height(parseInt(this.height()) + parseInt(this.css('margin-top')) + parseInt(this.css('margin-bottom')) + 'px')
 						},
 						callback: function(response){
 							$('#wrap').height(parseInt(this.height()) + parseInt(this.css('margin-top')) + parseInt(this.css('margin-bottom')) + 'px');
