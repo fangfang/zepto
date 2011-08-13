@@ -22,7 +22,7 @@ var Zepto = (function() {
     };
 	
   String.prototype.trim = String.prototype.trim || function(){
-	return this.replace(/^(\s|\u00A0)+/,'').replace(/(\s|\u00A0)+$/,'');
+	return this.replace(/^\s+/,'').replace(/\s+$/,'');
   }
 
   function isF(value) { return ({}).toString.call(value) == "[object Function]" }
