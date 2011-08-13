@@ -18,9 +18,14 @@
 			
 			.foo2 { 
 				padding 10px 0;
-				width: 80px;
-				height:100px;
+				width: 150px;
+				height:200px;
 				border: 1px blue solid;
+				float:left;
+			}
+			#foo2-title {
+				float:left;
+				width:130px;
 			}
 
             .zepto-bigslide-silder {
@@ -39,6 +44,7 @@
 			
 			.foo2 .item {
 				display: block;
+				width: 140px;
 			}
             
             .real-item {
@@ -49,17 +55,25 @@
                 top: 4px;
                 left: 8px
             }
+			
+			.foo2 .real-item {
+				width:120px;
+			}
         </style>
         <style type="text/css">  
-            .zepto-bigslide-box {overflow: hidden;}
+            .zepto-bigslide-box {overflow: hidden;position:relative;}
 			
             .zepto-bigslide-force {-webkit-transition: -webkit-transform 1s cubic-bezier(0,0,0.05,1);}
 			.zepto-bigslide-move{-webkit-transition: -webkit-transform .1s linear;}
+			
+			.zepto-slider-scrollbar {opacity:.5;background-color:black;-wibkit-border-radius:2px;border-radius:2px;-webkit-transition: -webkit-transform 1s cubic-bezier(0,0,0.05,1), opacity .3s linear;
+			position:absolute;}
               
         </style>
     </head>
     <body>
-        <h1> Big Slide</h1>
+        <h1> slider demo </h1>
+		<h2>horizontal</h2>
         <div class="foo zepto-bigslide-box">
             <div class="zepto-bigslide-silder">
                 <div class="item">
@@ -94,8 +108,9 @@
                 </div>
             </div>
         </div>
+		<hr/>
 		
-		
+		<h2 id="foo2-title">vertical</h2>
         <div class="foo2 zepto-bigslide-box">
             <div class="zepto-bigslide-silder2">
                 <div class="item">
@@ -128,6 +143,36 @@
                         6
                     </div>
                 </div>
+				<div class="item">
+                    <div class="real-item">
+                        7
+                    </div>
+                </div>
+				<div class="item">
+                    <div class="real-item">
+                        8
+                    </div>
+                </div>
+				<div class="item">
+                    <div class="real-item">
+                        9
+                    </div>
+                </div>
+				<div class="item">
+                    <div class="real-item">
+                        10
+                    </div>
+                </div>
+				<div class="item">
+                    <div class="real-item">
+                        11
+                    </div>
+                </div>
+				<div class="item">
+                    <div class="real-item">
+                        12
+                    </div>
+                </div>
             </div>
         </div>
 		
@@ -140,6 +185,7 @@
                 });
                 $(".foo2").slider({
                     direction: "vertical",//vertical
+                    scroll: true,
                     power: 200//default 200, set 0 to disable inertia
                 });
             })()
