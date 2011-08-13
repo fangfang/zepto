@@ -20,6 +20,10 @@ var Zepto = (function() {
       'td': tableRow, 'th': tableRow,
       '*': document.createElement('div')
     };
+	
+  String.prototype.trim = String.prototype.trim || function(){
+	return this.replace(/^(\s|\u00A0)+/,'').replace(/(\s|\u00A0)+$/,'');
+  }
 
   function isF(value) { return ({}).toString.call(value) == "[object Function]" }
   function isO(value) { return value instanceof Object }

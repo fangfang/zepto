@@ -33,7 +33,6 @@
             width: lcoffset.left + lcoffset.width + parseInt(lc.css('margin-right')) + parseInt(obj.css('padding-left')) - fcoffset.left,
             height: lcoffset.top + lcoffset.height + parseInt(lc.css('margin-bottom')) + parseInt(obj.css('padding-top')) - fcoffset.top
         };
-        return obj.offset();
     }
 	
 	function checkEdge(posValue, sliderValue, parentValue, powerValue) {
