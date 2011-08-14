@@ -1,55 +1,27 @@
 (function($) {
-
+	var isIphone = /i(Phone|P(o|a)d)/.test(navigator.userAgent) && typeof window.ontouchstart !== 'undefined',
+		isAndroid = /Android/.test(navigator.userAgent),
+		has3d = isIphone && 'WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix();
+	
+	var translateStart = has3d ? 'translate3d(' : 'translate(', translateEnd = has3d ? ',0)' : ')';
+	
     function parentIfText(node) {
         return 'tagName' in node ? node : node.parentNode;
-    }
-    
-    function translate(zobj, x, y) {
-        zobj.css("-webkit-transform", "translate3d(" + x + "px," + y + "px,0)");
     }
     
     function power(delta, duration, force) {
         return Math.floor(delta / duration * force);
     }
-    
-    function getpos(e, dir) {
-        var pos = {
-            x: e.clientX,
-            y: e.clientY,
-            time: Date.now()
-        };
-        if ( dir == "horizontal" ) {
-            pos.y = 0;
-        }
-        else if ( dir == "vertical" ) {
-            pos.x = 0;
-        }
-        return pos;
-    }
-    
-    function getOffset(obj) {
-        var lc = obj.children().last(), lcoffset = lc.offset(), fcoffset = obj.children().first().offset();
-        return {
-            width: lcoffset.left + lcoffset.width + parseInt(lc.css('margin-right')) + parseInt(obj.css('padding-left')) - fcoffset.left,
-            height: lcoffset.top + lcoffset.height + parseInt(lc.css('margin-bottom')) + parseInt(obj.css('padding-top')) - fcoffset.top
-        };
-    }
 	
-	function checkEdge(posValue, sliderValue, parentValue, powerValue) {
-		return posValue >= 0 ? 1 : posValue + sliderValue + (powerValue || 0) <= parentValue ? -1 : 0;
+	function computeState(pos, slideroffset) {
+		return pos / slideroffset;
 	}
-    
-    function computepos(last, powerX, powerY, slideroffset, parentoffset) {
-        var pos = {
-            x: last.x + powerX,
-            y: last.y + powerY
-        }, xState = checkEdge(pos.x, slideroffset.width, parentoffset.width, powerX), yState = checkEdge(pos.y, slideroffset.height, parentoffset.height, powerY);
-		
-		pos.x = xState > 0 ? 0 : xState < 0 ? parentoffset.width - slideroffset.width : pos.x;
-		pos.y = yState > 0 ? 0 : yState < 0 ? parentoffset.height - slideroffset.height : pos.y;
-		
-        return pos;
-    }
+	
+	function computePos(last, power, slideroffset, parentoffset, scale){
+	    var pos = last + power, state = computeState(pos, slideroffset);
+
+		return state > 0 ? 0 : state < scale - 1 ? parentoffset - slideroffset : pos;
+	}
     
     $.fn.slider = function(options) {
         var opt = $.extend({
@@ -57,109 +29,137 @@
             power: 200,
             positive: null,
             negative: null,
+			scroll: false,
             btnspeed: 50
-        }, options), me = this, body = $(document.body);
-        
+        }, options), translate = function(zobj, pos) {
+        	zobj.css("-webkit-transform", translateStart + (horizontal ? pos + "px,0" : "0," + pos + "px") + translateEnd);
+    	}, getpos = function(e){
+			var pos = {
+				val: horizontal ? e.clientX : e.clientY,
+            	time: Date.now()
+        	};
+		
+        	return pos;
+		}, getOffset = function(obj){
+	        var lc = obj.children().last(), fc = obj.children().first(), lcoffset = lc.offset(), fcoffset = fc.offset();
+	
+	        return horizontal ? lcoffset.left + lcoffset.width + parseInt(lc.css('margin-right')) + parseInt(fc.css('margin-left')) + parseInt(obj.css('padding-left')) + parseInt(obj.css('padding-right')) + parseInt(obj.css('margin-right')) - obj.offset().left : lcoffset.top + lcoffset.height + parseInt(lc.css('margin-bottom')) + parseInt(fc.css('margin-top')) + parseInt(obj.css('padding-top')) + parseInt(obj.css('padding-bottom')) + parseInt(obj.css('margin-bottom')) - obj.offset().top;
+	    }, me = this, body = $(document.body), horizontal = true, positive = opt.positive ? $(opt.positive.selector) : null, negative = opt.negative ? $(opt.negative.selector) : null;
+		
+		horizontal = opt.direction == 'horizontal';
+		
         return me.css({
             "-webkit-perspective": 1000,
             "-webkit-backface-visibility": 'hidden'
         }).each(function(index) {
-            var thiz = this, that = $(thiz), slider = that.children(), ontouchmove = function(e) {
-                triggerClick = false;
-                var tmp = getpos(e.touches[0], opt.direction);
-                last = {
-                    x: last.x + tmp.x - cmove.x,
-                    y: last.y + tmp.y - cmove.y
-                };
-                changeBtnState();
-                
-                translate(slider, last.x, last.y);
+            var thiz = this, that = $(thiz), slider = that.children(), parentoffset = horizontal ? that.offset().width : that.offset().height, ontouchmove = function(e) {
+                movecount += 1;
+                var tmp = getpos(e.touches[0]),
+					factor = state > 0 || state < scale - 1 ? 0.5 : 1;
+
+                last = last + (tmp.val - cmove.val) * factor;
+				
+                translate(slider, last);
+				changeState();
+				scrollbar && changeScrollbar();
+				(positive || negative) && changeBtn();
                 lmove = cmove;
                 cmove = tmp;
             }, ontouchend = function(e) {
-            
                 body.unbind("touchmove", ontouchmove);
                 body.unbind("touchend", ontouchend);
+				
+				cmove = getpos(e.changedTouches[0]);
                 
-                if (triggerClick) {
+                if ( (isIphone && !movecount) || (isAndroid && movecount <= 2 && (Date.now() - touchstartPos.time) < 300 && Math.abs(cmove.x - touchstartPos.x) < 10 && Math.abs(cmove.y - touchstartPos.y) < 10) ) {
                     $(parentIfText(e.target)).trigger('click');
                 }
                 
-                if (opt.power <= 0) {
-                    return;
-                }
+                if (opt.power <= 0) return;
                 
                 if (lmove) {
-                    cmove = getpos(e.changedTouches[0], opt.direction);
-                    var dtime = cmove.time - lmove.time;
-                    
-                    last = computepos(last, power(cmove.x - lmove.x, dtime, opt.power), power(cmove.y - lmove.y, dtime, opt.power), slideroffset, that.offset());
-                    
-                    slider.addClass("zepto-bigslide-force");
-                    translate(slider, last.x, last.y);
+                    last = computePos(last, power(cmove.val - lmove.val, cmove.time - lmove.time, opt.power), slideroffset, parentoffset, scale);
+                    slider.addClass("zepto-slider-force");
+					translate(slider, last);
+					changeState();
+					scrollbar && changeScrollbar();
                     slider.one("webkitTransitionEnd", function(e) {
-                        slider.removeClass("zepto-bigslide-force");
-                        changeBtnState();
+                    	slider.removeClass("zepto-slider-force");
+                        (positive || negative) && changeBtn();
+						scrollbar && scrollbar.css('opacity', '0');
                     });
                 }
             }, move = function(range) {
-				var rangeX = 0, rangeY = 0;
-                if (opt.direction == "horizontal") {
-                    rangeX = range;
-                }
-                else if (opt.direction == "vertical") {
-                    rangeY = range;
-                }
-				last = computepos(last, rangeX, rangeY, slideroffset, that.offset());
-                
-                slider.addClass('zepto-bigslide-move');
-                translate(slider, last.x, last.y);
-                slider.one("webkitTransitionEnd", function(e) {
-                    slider.removeClass('zepto-bigslide-move');
-                    changeBtnState();
-                });
-                
-            }, changeBtnState = function() {
-				var state = 0;
-				if ( opt.direction == "horizontal" ) {
-                	state = checkEdge(last.x, slideroffset.width, that.offset().width)
-            	}
-            	else if ( opt.direction == "vertical" ) {
-                	state = checkEdge(last.y, slideroffset.height, that.offset().height);
-           		}
-				if ( state > 0 ) {
-					if ( positive ) positive.attr('class', opt.positive.enable);
-					if ( negative ) negative.attr('class', opt.negative.disable);
+				var stateOld = state;
+				last = computePos(last, range, slideroffset, parentoffset, scale);
+				changeState();
+				if (state === stateOld) return;
+				slider.addClass('zepto-slider-move');
+				translate(slider, last);
+				scrollbar && scrollbar.addClass('zepto-slider-scrollbar-move');
+				scrollbar && changeScrollbar();
+				slider.one("webkitTransitionEnd", function(e) {
+					slider.removeClass('zepto-slider-move');
+					scrollbar && scrollbar.removeClass('zepto-slider-scrollbar-move');
+					(positive || negative) && changeBtn();
+					scrollbar && scrollbar.css('opacity', '0');
+				});
+            }, changeState = function() {
+				state = computeState(last, slideroffset);
+			}, changeBtn = function() {
+				if ( state >= 0 ) {
+					opt.positive.enable && opt.positive.enable.call(positive);
+					opt.negative.disable && opt.negative.disable.call(negative);
 				}
-				else if ( state < 0 ) {
-					if ( negative ) negative.attr('class', opt.negative.enable);
-					if ( positive ) positive.attr('class', opt.positive.disable);
+				else if ( state <= scale - 1 ) {
+					opt.negative.enable && opt.negative.enable.call(negative);
+					opt.positive.disable && opt.positive.disable.call(positive);
 				}
 				else {
-					if ( positive ) positive.attr('class', opt.positive.enable);
-					if ( negative ) negative.attr('class', opt.negative.enable);
+					opt.positive.enable && opt.positive.enable.call(positive);
+					opt.negative.enable && opt.negative.enable.call(negative);
 				}
-			}, cmove, lmove, last = {
-                x: 0,
-                y: 0
-            }, triggerClick = true, slideroffset = getOffset(slider), positive = opt.positive ? $(opt.positive.selector) : null, negative = opt.negative ? $(opt.negative.selector) : null;
+			}, changeScrollbar = function() {
+				scrollbar.css('opacity', '.5');
+				translate(scrollbar, parentoffset * -state);
+			}, initScrollbar = function() {
+				if (!scrollbar) {
+					styleStr = horizontal ? 'left:0;bottom:0;height:5px;width:' + scale * parentoffset + 'px;' : 'right:0;top:0;width:5px;height:' + scale * parentoffset + 'px;';
+					scrollbar = $('<div class="zepto-slider-scrollbar" style="' + styleStr + '"></div>');
+					that.append(scrollbar);
+					translate(scrollbar, parentoffset * -state);
+				}
+				else {
+					scrollbar[horizontal ? 'width' : 'height'](scale * parentoffset + 'px');
+					changeScrollbar();
+				}
+				scrollbar.css('opacity', 0);
+			}, init = function() {
+				slideroffset = getOffset(slider);
+				scale = parentoffset / slideroffset;
+				changeState();
+				(positive || negative) && changeBtn();
+				opt.scroll && initScrollbar();
+			}, cmove, lmove, last = 0, movecount = 0, touchstartPos, slideroffset, scale, scrollbar, state;
             
-            that.bind("touchstart", function(e) {
-                triggerClick = true;
-				if (opt.automove) {
-					clearInterval(intervalID);
-					intervalID = false;
-				}
+			me.sliderReinit = function(){
+				me.each(init);
+			};
+
+            init();
+			that.bind("touchstart", function(e) {
+                e.preventDefault();
+                movecount = 0;
                 cmove = getpos(e.touches[0], opt.direction);
-                slider.removeClass("zepto-bigslide-force");
+				touchstartPos = cmove;
+                slider.removeClass("zepto-slider-force");
                 body.bind("touchmove", ontouchmove);
                 body.bind("touchend", ontouchend);
-                e.preventDefault();
             });
-			
+
 			//button
 			var hold = false, direction = 1, timeout = function() {
-                if (hold) {
+                if ( hold ) {
                     move(direction * opt.btnspeed);
                     setTimeout(timeout, 100);
                 }
@@ -173,14 +173,13 @@
                     hold = false;
                 });
 			};
-			
+
             if ( positive && opt.positive.clickable ) {
-				bindBtn(positive.selector, -1);
+				bindBtn(positive, -1);
             }
             if ( negative && opt.negative.clickable ) {
-				bindBtn(negative.selector, 1);
+				bindBtn(negative, 1);
             }
         });
     };
-    
 })(Zepto);

@@ -1,159 +1,97 @@
 (function($) {
-
+	var isIphone = /i(Phone|P(o|a)d)/.test(navigator.userAgent) && typeof window.ontouchstart !== 'undefined',
+		isAndroid = /Android/.test(navigator.userAgent),
+		has3d = isIphone && 'WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix();
+	
+	var translateStart = has3d ? 'translate3d(' : 'translate(', translateEnd = has3d ? ',0)' : ')';
+	
     function parentIfText(node) {
         return 'tagName' in node ? node : node.parentNode;
-    }
-    
-    function translate(zobj, x, y) {
-        zobj.css("-webkit-transform", "translate3d(" + x + "px," + y + "px,0)");
     }
     
     function power(delta, duration, force) {
         return Math.floor(delta / duration * force);
     }
-    
-    function getpos(e, dir) {
-        var pos = {
-            x: e.clientX,
-            y: e.clientY,
-            time: Date.now()
-        };
-        if ( dir == "horizontal" ) {
-            pos.y = 0;
-        }
-        else if ( dir == "vertical" ) {
-            pos.x = 0;
-        }
-        return pos;
-    }
-    
-    function getOffset(obj) {
-        var lc = obj.children().last(), lcoffset = lc.offset(), fcoffset = obj.children().first().offset();
-        return {
-            width: lcoffset.left + lcoffset.width + parseInt(lc.css('margin-right')) + parseInt(obj.css('padding-left')) - fcoffset.left,
-            height: lcoffset.top + lcoffset.height + parseInt(lc.css('margin-bottom')) + parseInt(obj.css('padding-top')) - fcoffset.top
-        };
-    }
 	
-	function checkEdge(posValue, sliderValue, parentValue, powerValue) {
-		return posValue >= 0 ? 1 : posValue + sliderValue + (powerValue || 0) <= parentValue ? -1 : 0;
+	function checkEdge(posValue, sliderValue, parentValue) {
+		return posValue >= 0 ? 1 : posValue + sliderValue <= parentValue ? -1 : 0;
 	}
-    
-    function computepos(last, powerX, powerY, slideroffset, parentoffset) {
-        var pos = {
-            x: last.x + powerX,
-            y: last.y + powerY
-        }, xState = checkEdge(pos.x, slideroffset.width, parentoffset.width, powerX), yState = checkEdge(pos.y, slideroffset.height, parentoffset.height, powerY);
-		
-		pos.x = xState > 0 ? 0 : xState < 0 ? parentoffset.width - slideroffset.width : pos.x;
-		pos.y = yState > 0 ? 0 : yState < 0 ? parentoffset.height - slideroffset.height : pos.y;
-		
-        return pos;
-    }
+	
+	function computepos(last, power, slideroffset, parentoffset){
+	    var pos = last + power, state = checkEdge(pos, slideroffset, parentoffset);
+
+		return state > 0 ? 0 : state < 0 ? parentoffset - slideroffset : pos;
+	}
     
     $.fn.slider = function(options) {
         var opt = $.extend({
             direction: "horizontal",
-            power: 200,
-            positive: null,
-            negative: null,
-            btnspeed: 50
-        }, options), me = this, body = $(document.body);
-        
+            power: 200
+        }, options), translate = function(zobj, pos) {
+        	zobj.css("-webkit-transform", translateStart + (horizontal ? pos + "px,0" : "0," + pos + "px") + translateEnd);
+    	}, getpos = function(e){
+			var pos = {
+				val: horizontal ? e.clientX : e.clientY,
+            	time: Date.now()
+        	};
+		
+        	return pos;
+		}, getOffset = function(obj){
+	        var lc = obj.children().last(), fc = obj.children().first(), lcoffset = lc.offset(), fcoffset = fc.offset();
+	
+	        return horizontal ? lcoffset.left + lcoffset.width + parseInt(lc.css('margin-right')) + parseInt(fc.css('margin-left')) + parseInt(obj.css('padding-left')) + parseInt(obj.css('padding-right')) + parseInt(obj.css('margin-right')) - obj.offset().left : lcoffset.top + lcoffset.height + parseInt(lc.css('margin-bottom')) + parseInt(fc.css('margin-top')) + parseInt(obj.css('padding-top')) + parseInt(obj.css('padding-bottom')) + parseInt(obj.css('margin-bottom')) - obj.offset().top;
+	    }, me = this, body = $(document.body), horizontal = true;
+		
+		horizontal = opt.direction == 'horizontal';
+		
         return me.css({
             "-webkit-perspective": 1000,
             "-webkit-backface-visibility": 'hidden'
         }).each(function(index) {
-            var thiz = this, that = $(thiz), slider = that.children(), ontouchmove = function(e) {
-                triggerClick = false;
-                var tmp = getpos(e, opt.direction);
-                last = {
-                    x: last.x + tmp.x - cmove.x,
-                    y: last.y + tmp.y - cmove.y
-                };
+            var thiz = this, that = $(thiz), slider = that.children(), parentoffset = horizontal ? that.offset().width : that.offset().height, slideroffset = getOffset(slider), ontouchmove = function(e) {
+                movecount += 1;
+                var tmp = getpos(e.touches[0]),
+					factor = state !== 0 ? 0.5 : 1;
 
-                translate(slider, last.x, last.y);
+                last = last + (tmp.val - cmove.val) * factor;
+                translate(slider, last);
+				changeState();
                 lmove = cmove;
                 cmove = tmp;
             }, ontouchend = function(e) {
-            
-                body.unbind("mousemove", ontouchmove);
-                body.unbind("mouseup", ontouchend);
+                body.unbind("touchmove", ontouchmove);
+                body.unbind("touchend", ontouchend);
+				
+				cmove = getpos(e.changedTouches[0]);
                 
-                if (triggerClick) {
+                if ( (isIphone && !movecount) || (isAndroid && movecount <= 2 && (Date.now() - touchstartPos.time) < 300 && Math.abs(cmove.x - touchstartPos.x) < 10 && Math.abs(cmove.y - touchstartPos.y) < 10) ) {
                     $(parentIfText(e.target)).trigger('click');
                 }
                 
-                if (opt.power <= 0) {
-                    return;
-                }
+                if (opt.power <= 0) return;
                 
                 if (lmove) {
-                    cmove = getpos(e, opt.direction);
-                    var dtime = cmove.time - lmove.time;
-                    
-                    last = computepos(last, power(cmove.x - lmove.x, dtime, opt.power), power(cmove.y - lmove.y, dtime, opt.power), slideroffset, that.offset());
-                    
-                    slider.addClass("zepto-bigslide-force");
-                    translate(slider, last.x, last.y);
-                    slider.one("webkitTransitionEnd", function(e) {
-                        slider.removeClass("zepto-bigslide-force");
+                    last = computepos(last, power(cmove.val - lmove.val, cmove.time - lmove.time, opt.power), slideroffset, parentoffset);
+                    slider.addClass("zepto-slider-force");
+					translate(slider, last);
+					changeState();
+					slider.one("webkitTransitionEnd", function(e) {
+                    	slider.removeClass("zepto-slider-force");
                     });
                 }
-            }, move = function(range) {
-				var rangeX = 0, rangeY = 0;
-                if (opt.direction == "horizontal") {
-                    rangeX = range;
-                }
-                else if (opt.direction == "vertical") {
-                    rangeY = range;
-                }
-				last = computepos(last, rangeX, rangeY, slideroffset, that.offset());
-                
-                slider.addClass('zepto-bigslide-move');
-                translate(slider, last.x, last.y);
-                slider.one("webkitTransitionEnd", function(e) {
-                    slider.removeClass('zepto-bigslide-move');
-                });
-                
-            }, cmove, lmove, last = {
-                x: 0,
-                y: 0
-            }, triggerClick = true, slideroffset = getOffset(slider);
-            
-            that.bind("mousedown", function(e) {
-                triggerClick = true;
-                cmove = getpos(e, opt.direction);
-                slider.removeClass("zepto-bigslide-force");
-                body.bind("mousemove", ontouchmove);
-                body.bind("mouseup", ontouchend);
+            }, changeState = function() {
+				state = checkEdge(last, slideroffset, parentoffset);
+			}, cmove, lmove, last = 0, movecount = 0, touchstartPos, state = 0;
+			
+            that.bind("touchstart", function(e) {
                 e.preventDefault();
+                movecount = 0;
+                cmove = getpos(e.touches[0]);
+				touchstartPos = cmove;
+                slider.removeClass("zepto-slider-force");
+                body.bind("touchmove", ontouchmove);
+                body.bind("touchend", ontouchend);
             });
-			
-			//button
-			var hold = false, direction = 1, timeout = function() {
-                if (hold) {
-                    move(direction * opt.btnspeed);
-                    setTimeout(timeout, 100);
-                }
-			}, bindBtn = function(selector, dir) {
-				$(selector).bind('mousedown', function(e) {
-					direction = dir;
-                    e.preventDefault();
-                    hold = true;
-                    setTimeout(timeout, 100);
-                }).bind('mouseup', function(e) {
-                    hold = false;
-                });
-			};
-			
-            if ( opt.positive ) {
-				bindBtn(opt.positive, -1);
-            }
-            if ( opt.negative ) {
-				bindBtn(opt.negative, 1);
-            }
         });
     };
-    
 })(Zepto);

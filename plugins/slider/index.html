@@ -5,9 +5,11 @@
         <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
         <script src="../../src/zepto.js">
         </script>
+		<script src="../../src/polyfill.js">
+        </script>
         <script src="../../src/event.js">
         </script>
-        <script src="slider_new.js">
+        <script src="slider.js">
         </script>
         <style type="text/css">
             .foo {
@@ -23,12 +25,12 @@
 				border: 1px blue solid;
 				float:left;
 			}
-			#foo2-title {
+			#foo2-title, #foo2-info {
 				float:left;
 				width:130px;
 			}
 
-            .zepto-bigslide-silder {
+            .zepto-slider-silder {
                 white-space:nowrap;
             }
 
@@ -59,23 +61,26 @@
 			.foo2 .real-item {
 				width:120px;
 			}
+			#pre, #next {
+				float:right;
+				margin-right:20px;
+			}
         </style>
         <style type="text/css">  
-            .zepto-bigslide-box {overflow: hidden;position:relative;}
+            .zepto-slider-box {overflow: hidden;position:relative;}
 			
-            .zepto-bigslide-force {-webkit-transition: -webkit-transform 1s cubic-bezier(0,0,0.05,1);}
-			.zepto-bigslide-move{-webkit-transition: -webkit-transform .1s linear;}
+            .zepto-slider-force {-webkit-transition: -webkit-transform 1s cubic-bezier(0,0,0.05,1);}
+			.zepto-slider-move{-webkit-transition: -webkit-transform .1s linear;}
 			
-			.zepto-slider-scrollbar {opacity:.5;background-color:black;-wibkit-border-radius:2px;border-radius:2px;-webkit-transition: -webkit-transform 1s cubic-bezier(0,0,0.05,1), opacity .3s linear;
-			position:absolute;}
-              
+			.zepto-slider-scrollbar {opacity:.0;background-color:black;-wibkit-border-radius:2px;border-radius:2px;-webkit-transition: -webkit-transform 1s cubic-bezier(0,0,0.05,1), opacity .2s linear;position:absolute;}
+            .zepto-slider-scrollbar-move{-webkit-transition: -webkit-transform .1s linear;}
         </style>
     </head>
     <body>
         <h1> slider demo </h1>
 		<h2>horizontal</h2>
-        <div class="foo zepto-bigslide-box">
-            <div class="zepto-bigslide-silder">
+        <div class="foo zepto-slider-box">
+            <div class="zepto-slider-silder">
                 <div class="item">
                     <div class="real-item">
                         1
@@ -110,9 +115,12 @@
         </div>
 		<hr/>
 		
-		<h2 id="foo2-title">vertical</h2>
-        <div class="foo2 zepto-bigslide-box">
-            <div class="zepto-bigslide-silder2">
+		<div id="foo2-title">
+			<h2>vertical</h2>
+			<p id="foo2-info">with btn & scrollbar</p>
+		</div>
+        <div class="foo2 zepto-slider-box">
+            <div class="zepto-slider-silder2">
                 <div class="item">
                     <div class="real-item">
                         1
@@ -163,7 +171,7 @@
                         10
                     </div>
                 </div>
-				<div class="item">
+				<!--<div class="item">
                     <div class="real-item">
                         11
                     </div>
@@ -172,22 +180,48 @@
                     <div class="real-item">
                         12
                     </div>
-                </div>
+                </div>-->
             </div>
         </div>
+		<button id="pre">下拉</button>
+		<button id="next">上拉</button>
+		<button id="test">点我往里面动态添加元素试试</button>
 		
 		
         <script>
             (function(){
+				function enableBtn() {
+					this.removeAttr('disabled')
+				}
+				function disableBtn() {
+					this.attr('disabled', 'disabled')
+				}
+				
                 $(".foo").slider({
                     direction: "horizontal",//vertical
                     power: 200//default 200, set 0 to disable inertia
                 });
-                $(".foo2").slider({
-                    direction: "vertical",//vertical
+                var foo2 = $(".foo2").slider({
+                    direction: "vertical",
                     scroll: true,
-                    power: 200//default 200, set 0 to disable inertia
+					positive:{
+						clickable: true,
+						selector: '#pre',
+						enable: enableBtn,
+						disable: disableBtn
+					},
+					negative:{
+						clickable: true,
+						selector: '#next',
+						enable: enableBtn,
+						disable: disableBtn
+					},
+                    power: 200
                 });
+				$('#test').bind('click', function(){
+					$('.zepto-slider-silder2').append('<div class="item"><div class="real-item">11</div></div><div class="item"><div class="real-item">12</div></div>');
+					foo2.sliderReinit();
+				});
             })()
         </script>
     </body>
