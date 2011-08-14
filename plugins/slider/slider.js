@@ -71,7 +71,7 @@
 				
 				cmove = getpos(e.changedTouches[0]);
                 
-                if ( (isIphone && !movecount) || (isAndroid && movecount <= 2 && (Date.now() - touchstartPos.time) < 300 && Math.abs(cmove.x - touchstartPos.x) < 10 && Math.abs(cmove.y - touchstartPos.y) < 10) ) {
+                if ( (isIphone && !movecount) || (isAndroid && movecount <= 2 && (Date.now() - touchstartPos.time) < 750 && Math.abs(cmove.val - touchstartPos.val) < 10 ) {
                     $(parentIfText(e.target)).trigger('click');
                 }
                 
