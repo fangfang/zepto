@@ -1,7 +1,9 @@
 (function($){
-	if(!window.localStorage && !window.JSON) return;
+	if(!window.localStorage || !window.JSON) return;
 
-	$.storage = function(type,index,val,callback){			
+	var cache = {},
+	
+	handler = function(type,index,val,callback){			
 		if($.isFunction(callback)) $(window).one("storage",callback);
 		switch(type){
 			case "storageSet" : set(index,val,callback);return;
@@ -10,8 +12,6 @@
 			default :;
 		}
 	}
-	
-	var cache = {},
 	
 	set = function(index,val,callback){
 		cache[index] = val;
@@ -41,6 +41,6 @@
 	};
 	
 	["storageSet", "storageGet", "storageClear"].forEach(function(m){
-    	$[m] = function(prefix,key,val,callback){ return $.storage(m,prefix+key,val,callback);}
+    	$[m] = function(prefix,key,val,callback){ return handler(m,prefix+key,val,callback);}
   	});	
 })(Zepto)
